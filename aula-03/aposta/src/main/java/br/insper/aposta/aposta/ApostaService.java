@@ -32,4 +32,40 @@ public class ApostaService {
         return apostaRepository.findAll();
     }
 
+    public String buscarSeAcertou(String id) {
+
+        Aposta aposta = apostaRepository.findById(id).get();
+
+        if (aposta.getStatus().equals("REALIZADA")) {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<RetornarPartidaDTO> partida = restTemplate.getForEntity(
+                    "http://localhost:8080/partida/" + aposta.getIdPartida(),
+                    RetornarPartidaDTO.class);
+
+            if (partida.getStatusCode().is2xxSuccessful()) {
+                if (!partida.getBody().getResultado().equals("NAO_REALIZADA")) {
+                    if (partida.getBody().getResultado().equals(aposta.getResultado())) {
+                        aposta.setStatus("GANHOU");
+                        apostaRepository.save(aposta);
+                        return "GANHOU";
+                    } else {
+                        aposta.setStatus("PERDIDA");
+                        apostaRepository.save(aposta);
+                        return "PERDIDA";
+                    }
+                } else {
+                    return "NAO_REALIZADA";
+                }
+            } else {
+                return "Partida não encontrada";
+            }
+
+        } else {
+            return "Aposta não realizada";
+        }
+    }
+
+    public List<Aposta> listarPorStatus(String status) {
+        return apostaRepository.findByStatus(status);
+    }
 }
