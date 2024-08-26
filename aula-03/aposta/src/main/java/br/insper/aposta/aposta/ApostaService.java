@@ -28,8 +28,12 @@ public class ApostaService {
 
     }
 
-    public List<Aposta> listar() {
-        return apostaRepository.findAll();
+    public List<Aposta> listarNormalOuPorStatus(String status) {
+        if (status != null) {
+            return apostaRepository.findByStatus(status);
+        } else {
+            return apostaRepository.findAll();
+        }
     }
 
     public String buscarSeAcertou(String id) {
@@ -65,7 +69,4 @@ public class ApostaService {
         }
     }
 
-    public List<Aposta> listarPorStatus(String status) {
-        return apostaRepository.findByStatus(status);
-    }
 }

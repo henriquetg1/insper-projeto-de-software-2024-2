@@ -12,9 +12,10 @@ public class ApostaController {
     @Autowired
     private ApostaService apostaService;
 
+    // listra com possibilidade de filtrar por status
     @GetMapping
-    public List<Aposta> listar() {
-        return apostaService.listar();
+    public List<Aposta> listar(@RequestParam(required = false) String status) {
+        return apostaService.listarNormalOuPorStatus(status);
     }
 
     @GetMapping("/{id}")
@@ -22,10 +23,10 @@ public class ApostaController {
         return apostaService.buscarSeAcertou(id);
     }
 
-    @GetMapping("status/{status}")
-    public List<Aposta> listarPorStatus(@PathVariable String status) {
-        return apostaService.listarPorStatus(status);
-    }
+//    @GetMapping("status/{status}")
+//    public List<Aposta> listarPorStatus(@PathVariable String status) {
+//        return apostaService.listarPorStatus(status);
+//    }
 
     @PostMapping
     public void salvar(@RequestBody Aposta aposta) {
